@@ -31,7 +31,7 @@
           contain
         >
           <v-img
-            src="https://demos.creative-tim.com/vuetify-material-dashboard/favicon.ico"
+            src="assets/image/bsblogo.png"
             max-height="30"
           />
         </v-list-item-avatar>
@@ -75,16 +75,6 @@
       <!-- https://github.com/vuetifyjs/vuetify/pull/8574 -->
       <div />
     </v-list>
-
-    <template v-slot:append>
-      <base-item
-        :item="{
-          title: $t('upgrade'),
-          icon: 'mdi-package-up',
-          to: '/upgrade',
-        }"
-      />
-    </template>
   </v-navigation-drawer>
 </template>
 
@@ -112,34 +102,34 @@
           to: '/',
         },
         {
-          icon: 'mdi-account',
-          title: 'user',
+          icon: ' mdi-database',
+          title: 'master data',
           to: '/pages/user',
         },
         {
-          title: 'rtables',
-          icon: 'mdi-clipboard-outline',
+          title: 'pembelian',
+          icon: 'mdi-cart-outline',
           to: '/tables/regular-tables',
         },
         {
-          title: 'typography',
-          icon: 'mdi-format-font',
+          title: 'penjualan',
+          icon: 'mdi-chart-areaspline',
           to: '/components/typography',
         },
         {
-          title: 'icons',
-          icon: 'mdi-chart-bubble',
-          to: '/components/icons',
+          title: 'akuntansi',
+          icon: 'mdi-cash-multiple',
+          to: '/components/typography',
         },
         {
-          title: 'google',
-          icon: 'mdi-map-marker',
-          to: '/maps/google-maps',
+          title: 'persediaan',
+          icon: 'mdi-package-variant',
+          to: '/components/typography',
         },
         {
-          title: 'notifications',
-          icon: 'mdi-bell',
-          to: '/components/notifications',
+          title: 'laporan',
+          icon: 'mdi-book-open',
+          to: '/components/typography',
         },
       ],
     }),
