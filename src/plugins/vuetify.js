@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 import Vue from 'vue'
 import Vuetify from 'vuetify/lib'
 import i18n from '@/i18n'

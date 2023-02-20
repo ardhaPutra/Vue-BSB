@@ -98,36 +98,36 @@
       items: [
         {
           icon: 'mdi-view-dashboard',
-          title: 'dashboard',
+          title: 'Dashboard',
           to: '/',
         },
         {
           icon: ' mdi-database',
-          title: 'master data',
-          to: '/pages/user',
+          title: 'Master Data',
+          to: '/tables/master-data',
         },
         {
-          title: 'pembelian',
+          title: 'Pembelian',
           icon: 'mdi-cart-outline',
           to: '/tables/regular-tables',
         },
         {
-          title: 'penjualan',
+          title: 'Penjualan',
           icon: 'mdi-chart-areaspline',
           to: '/components/typography',
         },
         {
-          title: 'akuntansi',
+          title: 'Akuntansi',
           icon: 'mdi-cash-multiple',
           to: '/components/typography',
         },
         {
-          title: 'persediaan',
+          title: 'Persediaan',
           icon: 'mdi-package-variant',
           to: '/components/typography',
         },
         {
-          title: 'laporan',
+          title: 'Laporan',
           icon: 'mdi-book-open',
           to: '/components/typography',
         },

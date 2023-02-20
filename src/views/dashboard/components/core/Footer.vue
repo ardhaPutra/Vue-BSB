@@ -28,7 +28,7 @@
           cols="12"
           md="auto"
         >
-          <div class="body-1 font-weight-light pt-6 pt-md-0 text-center">
+          <div class="text-body-1 font-weight-light pt-6 pt-md-0 text-center">
             &copy;
             {{ new Date().getFullYear() }}
             by <a href="https://balisolutionbiz.com/">Bali Solution Biz</a>
@@ -38,33 +38,6 @@
     </v-container>
   </v-footer>
 </template>
-
-<script>
-  export default {
-    name: 'DashboardCoreFooter',
-
-    data: () => ({
-      links: [
-        {
-          href: '#',
-          text: 'Creative Tim',
-        },
-        {
-          href: '#',
-          text: 'About Us',
-        },
-        {
-          href: '#',
-          text: 'Blog',
-        },
-        {
-          href: '#',
-          text: 'Licenses',
-        },
-      ],
-    }),
-  }
-</script>
 
 <style lang="sass">
   #dashboard-core-footer
