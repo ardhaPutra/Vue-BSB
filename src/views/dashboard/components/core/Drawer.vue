@@ -61,7 +61,6 @@
           :key="`group-${i}`"
           :item="item"
         >
-          <!--  -->
         </base-item-group>
 
         <base-item
@@ -114,22 +113,22 @@
         {
           title: 'Penjualan',
           icon: 'mdi-chart-areaspline',
-          to: '/components/typography',
+          to: '/maps/google-maps',
         },
         {
           title: 'Akuntansi',
           icon: 'mdi-cash-multiple',
-          to: '/components/typography',
+          to: '/components/notifications',
         },
         {
           title: 'Persediaan',
           icon: 'mdi-package-variant',
-          to: '/components/typography',
+          to: '/components/icons',
         },
         {
           title: 'Laporan',
           icon: 'mdi-book-open',
-          to: '/components/typography',
+          to: '/pages/user',
         },
       ],
     }),
