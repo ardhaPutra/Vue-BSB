@@ -40,7 +40,7 @@
               <span class="text-h5">Tambah Barang</span>
             </v-card-title>
             <v-card-text>
-              <v-form @submit.prevent="submitForm">
+              <v-form >
                 <v-container>
                   <v-row>
                     <v-col
@@ -133,6 +133,30 @@
         </template>
       </v-data-table>
     </v-card>
+
+    <v-dialog v-model="editDialog" max-width="500px">
+    <v-card>
+      <v-card-title>
+        Edit Barang
+      </v-card-title>
+
+      <v-card-text>
+        <v-form ref="form">
+          <v-text-field v-model="editedItem.id_barang" label="id_barang"></v-text-field>
+          <v-text-field v-model="editedItem.nama" label="Nama"></v-text-field>
+          <v-text-field v-model="editedItem.jumlah" label="Jumlah" type="number"></v-text-field>
+          <v-text-field v-model="editedItem.harga" label="Harga" type="number"></v-text-field>
+        </v-form>
+      </v-card-text>
+
+      <v-card-actions>
+        <v-spacer></v-spacer>
+        <v-btn color="blue darken-1" text @click="closeDialogEdit">Cancel</v-btn>
+        <v-btn color="blue darken-1" text @click="updateItem">Save</v-btn>
+      </v-card-actions>
+    </v-card>
+  </v-dialog>
+
   </v-container>
 </template>
 
@@ -158,6 +182,13 @@
           jumlah: '',
           harga: '',
         },
+        editDialog: false,
+        editedItem: {
+          id_barang: '',
+          nama: '',
+          jumlah: '',
+          harga: ''
+        },
         search: '',
         loading: false,
         pagination: {
@@ -167,9 +198,6 @@
         totalItems: 0,
         itemsPerPage: 10,
       }
-    },
-    mounted () {
-      this.loadItems()
     },
     methods: {
       loadItems (page = 1) {
@@ -206,29 +234,32 @@
         this.jumlah = ''
         this.harga = ''
       },
-      // submitForm () {
-      //   // Mengirim data menggunakan Axios
-      //   axios.post('http://localhost/crud-php/api/create.php', {
-      //     nama: this.nama,
-      //     jumlah: this.jumlah,
-      //     harga: this.harga,
-      //   })
-      //     .then(response => {
-      //       // Tampilkan pesan sukses jika data berhasil disimpan ke API PHP
-      //       alert('Data berhasil disimpan')
-      //       console.log(response)
-      //       this.closeDialog()
-      //       this.$emit('user-created')
-      //     })
-      //     .catch(error => {
-      //       // Tampilkan pesan error jika terjadi kesalahan dalam mengirim data ke API PHP
-      //       console.log(error)
-      //       alert('Terjadi kesalahan dalam menyimpan data')
-      //     })
-      // },
+      editItem(item) {
+        this.editedItem = Object.assign({}, item)
+        this.editDialog = true
+      },
+      closeDialogEdit() {
+        this.editDialog = false
+        this.$refs.form.reset()
+      },
+      // edit item
+      updateItem() {
+        axios.post('http://localhost/crud-php/api/update.php', this.editedItem)
+          .then(response => {
+            // handle success
+            console.log(response.data)
+            this.editDialog = false
+            this.$refs.form.reset()
+            this.loadData()
+          })
+          .catch(error => {
+            // handle error
+            console.log(error)
+          })
+      },
       async addItem() {
         try {
-          const response = await axios.post('http://localhost/crud-php/api/create.php', this.newItem);
+          const response = await axios.post('http://localhost/crud-php/api/createdata.php', this.newItem);
           this.items.push(response.data);
           this.showAddDialog = false;
           this.newItem = {
@@ -240,6 +271,21 @@
           console.error(error);
         }
       },
+    },
+    deleteItem(item) {
+      // Mengirimkan data ke Axios
+      axios.post('http://localhost/crud-php/api/delete.php', {
+        id: item.id
+      })
+      .then(function(response) {
+        console.log(response.data);
+      })
+      .catch(function(error) {
+        console.log(error);
+      });
+    },
+    mounted () {
+      this.loadItems()
     },
   }
 </script>
