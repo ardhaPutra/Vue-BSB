@@ -24,23 +24,26 @@
           hide-details
         />
         <v-spacer />
-        <v-btn
-          color="primary"
-          @click="dialog = true"
-        >
-          Tambah Barang
-        </v-btn>
 
         <v-dialog
           v-model="dialog"
           width="auto"
         >
+          <template v-slot:activator="{ on }">
+            <v-btn
+              dark v-on="on"
+              color="primary"
+            >
+              Tambah Barang
+            </v-btn>
+          </template>
+
           <v-card>
             <v-card-title>
               <span class="text-h5">Tambah Barang</span>
             </v-card-title>
             <v-card-text>
-              <v-form >
+              <v-form>
                 <v-container>
                   <v-row>
                     <v-col
@@ -49,7 +52,7 @@
                       md="4"
                     >
                       <v-text-field
-                        v-model="newItem.nama"
+                        v-model="addItem.nama"
                         label="Nama Barang*"
                         required
                       />
@@ -60,7 +63,7 @@
                       md="4"
                     >
                       <v-text-field
-                        v-model="newItem.jumlah"
+                        v-model="addItem.jumlah"
                         label="Jumlah*"
                         type="number"
                         hint="masukkan dalam bentuk angka"
@@ -72,7 +75,7 @@
                       md="4"
                     >
                       <v-text-field
-                        v-model="newItem.harga"
+                        v-model="addItem.harga"
                         label="Harga*"
                         type="number"
                         hint="masukkan dalam bentuk angka"
@@ -96,7 +99,7 @@
               <v-btn
                 color="success"
                 variant="text"
-                @click="addItem"
+                @click="saveData"
               >
                 Simpan
               </v-btn>
@@ -121,6 +124,7 @@
           'show-first-last-page': true,
           'hide-default-footer': true
         }"
+        @add-item="openDialog"
         @update:pagination="loadItems"
       >
         <template v-slot:item.actions="{ item }">
@@ -135,28 +139,31 @@
     </v-card>
 
     <v-dialog v-model="editDialog" max-width="500px">
-    <v-card>
-      <v-card-title>
-        Edit Barang
-      </v-card-title>
+      <v-card>
+        <v-card-title>
+          Edit Barang
+        </v-card-title>
 
-      <v-card-text>
-        <v-form ref="form">
-          <v-text-field v-model="editedItem.id_barang" label="id_barang"></v-text-field>
-          <v-text-field v-model="editedItem.nama" label="Nama"></v-text-field>
-          <v-text-field v-model="editedItem.jumlah" label="Jumlah" type="number"></v-text-field>
-          <v-text-field v-model="editedItem.harga" label="Harga" type="number"></v-text-field>
-        </v-form>
-      </v-card-text>
+        <v-card-text>
+          <v-form ref="form">
+            <v-text-field v-model="editedItem.id_barang" label="id_barang" />
+            <v-text-field v-model="editedItem.nama" label="Nama" />
+            <v-text-field v-model="editedItem.jumlah" label="Jumlah" type="number" />
+            <v-text-field v-model="editedItem.harga" label="Harga" type="number" />
+          </v-form>
+        </v-card-text>
 
-      <v-card-actions>
-        <v-spacer></v-spacer>
-        <v-btn color="blue darken-1" text @click="closeDialogEdit">Cancel</v-btn>
-        <v-btn color="blue darken-1" text @click="updateItem">Save</v-btn>
-      </v-card-actions>
-    </v-card>
-  </v-dialog>
-
+        <v-card-actions>
+          <v-spacer />
+          <v-btn color="blue darken-1" text @click="closeDialogEdit">
+            Cancel
+          </v-btn>
+          <v-btn color="blue darken-1" text @click="updateItem">
+            Save
+          </v-btn>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
   </v-container>
 </template>
 
@@ -177,7 +184,7 @@
           { text: 'Action', value: 'actions', sortable: false },
         ],
         items: [],
-        newItem: {
+        addItem: {
           nama: '',
           jumlah: '',
           harga: '',
@@ -187,7 +194,7 @@
           id_barang: '',
           nama: '',
           jumlah: '',
-          harga: ''
+          harga: '',
         },
         search: '',
         loading: false,
@@ -198,6 +205,9 @@
         totalItems: 0,
         itemsPerPage: 10,
       }
+    },
+    mounted () {
+      this.loadItems()
     },
     methods: {
       loadItems (page = 1) {
@@ -222,6 +232,26 @@
             this.loading = false
           })
       },
+      openDialog () {
+        this.addItem.nama = ''
+        this.addItem.umur = ''
+        this.addItem.alamat = ''
+        this.dialog = true
+      },
+      saveData () {
+        axios.post('http://localhost/crud-php/api/createdata.php', {
+          nama: this.addItem.nama,
+          jumlah: this.addItem.jumlah,
+          harga: this.addItem.harga,
+        })
+          .then(response => {
+            console.log(response)
+            this.dialog = false
+          })
+          .catch(error => {
+            console.log(error)
+          })
+      },
       submit () {
         // Panggil fungsi untuk mengirim data ke API PHP menggunakan Axios
         this.submitData()
@@ -230,20 +260,17 @@
       },
       closeDialog () {
         this.dialog = false
-        this.nama = ''
-        this.jumlah = ''
-        this.harga = ''
       },
-      editItem(item) {
+      editItem (item) {
         this.editedItem = Object.assign({}, item)
         this.editDialog = true
       },
-      closeDialogEdit() {
+      closeDialogEdit () {
         this.editDialog = false
         this.$refs.form.reset()
       },
       // edit item
-      updateItem() {
+      updateItem () {
         axios.post('http://localhost/crud-php/api/update.php', this.editedItem)
           .then(response => {
             // handle success
@@ -257,35 +284,32 @@
             console.log(error)
           })
       },
-      async addItem() {
-        try {
-          const response = await axios.post('http://localhost/crud-php/api/createdata.php', this.newItem);
-          this.items.push(response.data);
-          this.showAddDialog = false;
-          this.newItem = {
-            nama: '',
-            jumlah: '',
-            harga: '',
-          };
-        } catch (error) {
-          console.error(error);
-        }
-      },
+      // async addItem() {
+      //   try {
+      //     const response = await axios.post('http://localhost/crud-php/api/createdata.php', this.newItem);
+      //     this.items.push(response.data);
+      //     this.showAddDialog = false;
+      //     this.newItem = {
+      //       nama: '',
+      //       jumlah: '',
+      //       harga: '',
+      //     };
+      //   } catch (error) {
+      //     console.error(error);
+      //   }
+      // },
     },
-    deleteItem(item) {
+    deleteItem (item) {
       // Mengirimkan data ke Axios
       axios.post('http://localhost/crud-php/api/delete.php', {
-        id: item.id
+        id: item.id,
       })
-      .then(function(response) {
-        console.log(response.data);
-      })
-      .catch(function(error) {
-        console.log(error);
-      });
-    },
-    mounted () {
-      this.loadItems()
+        .then(function (response) {
+          console.log(response.data)
+        })
+        .catch(function (error) {
+          console.log(error)
+        })
     },
   }
 </script>
