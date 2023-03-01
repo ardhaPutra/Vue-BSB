@@ -301,7 +301,7 @@
       deleteItem (item) {
         const index = this.items.indexOf(item)
         if (confirm('Anda yakin ingin menghapus item ini?') && this.items.splice(index, 1)) {
-          axios.delete('http://localhost/crud-php/api/delete.php' + item.id_barang)
+          axios.delete('http://localhost/crud-php/api/delete.php/' + item.id_barang)
             .then(() => {
               // this.loadItems()
               this.items.splice(index, 1)
