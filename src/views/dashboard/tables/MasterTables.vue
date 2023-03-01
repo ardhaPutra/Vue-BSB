@@ -31,8 +31,8 @@
         >
           <template v-slot:activator="{ on }">
             <v-btn
-              dark v-on="on"
-              color="primary"
+              dark color="primary"
+              v-on="on"
             >
               Tambah Barang
             </v-btn>
@@ -173,7 +173,8 @@
     data () {
       return {
         dialog: false,
-        selected: null,
+        editDialog: false,
+        items: [],
         headers: [
           { text: 'ID', value: 'id_barang' },
           { text: 'Nama', value: 'nama' },
@@ -183,27 +184,38 @@
           { text: 'Tanggal', value: 'tanggal' },
           { text: 'Action', value: 'actions', sortable: false },
         ],
-        items: [],
-        addItem: {
-          nama: '',
-          jumlah: '',
-          harga: '',
-        },
-        editDialog: false,
+        totalItems: 0,
+        loading: false,
+        itemsPerPage: 10,
+        currentPage: 1,
+        search: '',
+        editedIndex: -1,
         editedItem: {
           id_barang: '',
           nama: '',
-          jumlah: '',
-          harga: '',
+          jumlah: 0,
+          harga: 0,
+          barcode: '',
+          tanggal: '',
         },
-        search: '',
-        loading: false,
-        pagination: {
-          rowsPerPage: 5,
-          itemsPerPageOptions: [5, 10, 15, 20],
+        defaultItem: {
+          id_barang: '',
+          nama: '',
+          jumlah: 0,
+          harga: 0,
+          barcode: '',
+          tanggal: '',
         },
-        totalItems: 0,
-        itemsPerPage: 10,
+        addItem: {
+          nama: '',
+          jumlah: 0,
+          harga: 0,
+        },
+        selected: [],
+        // pagination: {
+        //   rowsPerPage: 5,
+        //   itemsPerPageOptions: [5, 10, 15, 20],
+        // },
       }
     },
     mounted () {
@@ -234,8 +246,8 @@
       },
       openDialog () {
         this.addItem.nama = ''
-        this.addItem.umur = ''
-        this.addItem.alamat = ''
+        this.addItem.jumlah = ''
+        this.addItem.harga = ''
         this.dialog = true
       },
       saveData () {
@@ -271,45 +283,39 @@
       },
       // edit item
       updateItem () {
-        axios.post('http://localhost/crud-php/api/update.php', this.editedItem)
+        axios.post('http://localhost/crud-php/api/update.php' + this.editedItem.id_barang, this.editedItem)
           .then(response => {
             // handle success
             console.log(response.data)
             this.editDialog = false
-            this.$refs.form.reset()
-            this.loadData()
+            // this.$refs.form.reset()
+            // this.loadData()
+            this.loadItems()
+            this.$toast.success('Data barang berhasil diupdate')
           })
           .catch(error => {
             // handle error
             console.log(error)
           })
       },
-      // async addItem() {
-      //   try {
-      //     const response = await axios.post('http://localhost/crud-php/api/createdata.php', this.newItem);
-      //     this.items.push(response.data);
-      //     this.showAddDialog = false;
-      //     this.newItem = {
-      //       nama: '',
-      //       jumlah: '',
-      //       harga: '',
-      //     };
-      //   } catch (error) {
-      //     console.error(error);
-      //   }
-      // },
-    },
-    deleteItem (item) {
-      // Mengirimkan data ke Axios
-      axios.post('http://localhost/crud-php/api/delete.php', {
-        id: item.id,
-      })
-        .then(function (response) {
-          console.log(response.data)
-        })
-        .catch(function (error) {
-          console.log(error)
-        })
+      deleteItem (item) {
+        const index = this.items.indexOf(item)
+        if (confirm('Anda yakin ingin menghapus item ini?') && this.items.splice(index, 1)) {
+          axios.delete('http://localhost/crud-php/api/delete.php' + item.id_barang)
+            .then(() => {
+              // this.loadItems()
+              this.items.splice(index, 1)
+              this.snackbar = true
+              this.snackbarText = 'Data berhasil dihapus'
+              // this.$toast.success('Data barang berhasil dihapus')
+            })
+            .catch((err) => {
+              console.error(err)
+              this.snackbar = true
+              this.snackbarText = 'Gagal menghapus data'
+            })
+        }
+      },
     },
   }
 </script>
