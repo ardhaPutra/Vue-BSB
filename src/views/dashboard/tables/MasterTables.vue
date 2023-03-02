@@ -62,6 +62,19 @@
                       sm="6"
                       md="4"
                     >
+                      <v-select
+                        v-model="addItem.kategori"
+                        :items="kategorifk"
+                        item-text="nm"
+                        item-value="pk"
+                        label="Kategori"
+                      />
+                    </v-col>
+                    <v-col
+                      cols="12"
+                      sm="6"
+                      md="4"
+                    >
                       <v-text-field
                         v-model="addItem.jumlah"
                         label="Jumlah*"
@@ -114,7 +127,6 @@
         :search="search"
         :loading="loading"
         :footer-props.items-per-page-options="[5, 10, 25]"
-
         :server-items-length="totalItems"
         :items-per-page="itemsPerPage"
         :footer-props="{
@@ -182,6 +194,7 @@
           { text: 'Harga', value: 'harga' },
           { text: 'Barcode', value: 'barcode' },
           { text: 'Tanggal', value: 'tanggal' },
+          { text: 'Kategori', value: 'nm' },
           { text: 'Action', value: 'actions', sortable: false },
         ],
         totalItems: 0,
@@ -193,6 +206,7 @@
         editedItem: {
           id_barang: '',
           nama: '',
+          kategorifk: '',
           jumlah: 0,
           harga: 0,
           barcode: '',
@@ -201,6 +215,7 @@
         defaultItem: {
           id_barang: '',
           nama: '',
+          kategorifk: '',
           jumlah: 0,
           harga: 0,
           barcode: '',
@@ -210,12 +225,10 @@
           nama: '',
           jumlah: 0,
           harga: 0,
+          kategorifk: 0,
         },
+        kategorifk: [],
         selected: [],
-        // pagination: {
-        //   rowsPerPage: 5,
-        //   itemsPerPageOptions: [5, 10, 15, 20],
-        // },
       }
     },
     mounted () {
@@ -238,6 +251,10 @@
             this.pagination = response.data.pagination
             this.totalItems = response.data.total_items
             this.loading = false
+            this.kategorifk = response.data.map(item => ({
+              text: item.nm,
+              value: item.pk,
+            }))
           })
           .catch((error) => {
             console.error(error)
@@ -246,6 +263,7 @@
       },
       openDialog () {
         this.addItem.nama = ''
+        this.addItem.kategorifk = ''
         this.addItem.jumlah = ''
         this.addItem.harga = ''
         this.dialog = true
@@ -255,6 +273,7 @@
           nama: this.addItem.nama,
           jumlah: this.addItem.jumlah,
           harga: this.addItem.harga,
+          kategorifk: this.addItem.kategorifk,
         })
           .then(response => {
             console.log(response)
