@@ -259,16 +259,11 @@
           .then(response => {
             console.log(response)
             this.dialog = false
+            this.loadItems() // load data after success
           })
           .catch(error => {
             console.log(error)
           })
-      },
-      submit () {
-        // Panggil fungsi untuk mengirim data ke API PHP menggunakan Axios
-        this.submitData()
-        // Tutup dialog setelah mengirim data
-        this.dialog = false
       },
       closeDialog () {
         this.dialog = false
@@ -300,14 +295,13 @@
       },
       deleteItem (item) {
         const index = this.items.indexOf(item)
-        if (confirm('Anda yakin ingin menghapus item ini?') && this.items.splice(index, 1)) {
-          axios.delete('http://localhost/crud-php/api/delete.php/' + item.id_barang)
+        if (confirm('Anda yakin ingin menghapus item ini?')) {
+          axios
+            .delete(`http://localhost/crud-php/api/delete.php?id_barang=${item.id_barang}`)
             .then(() => {
-              // this.loadItems()
               this.items.splice(index, 1)
               this.snackbar = true
               this.snackbarText = 'Data berhasil dihapus'
-              // this.$toast.success('Data barang berhasil dihapus')
             })
             .catch((err) => {
               console.error(err)
