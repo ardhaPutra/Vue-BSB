@@ -43,7 +43,7 @@
               <span class="text-h5">Tambah Barang</span>
             </v-card-title>
             <v-card-text>
-              <v-form>
+              <v-form ref="form">
                 <v-container>
                   <v-row>
                     <v-col
@@ -63,8 +63,8 @@
                       md="4"
                     >
                       <v-select
-                        v-model="addItem.kategori"
-                        :items="kategorifk"
+                        v-model="addItem.kategorifk"
+                        :items="categories"
                         item-text="nm"
                         item-value="pk"
                         label="Kategori"
@@ -161,6 +161,15 @@
             <v-text-field v-model="editedItem.id_barang" label="id_barang" />
             <v-text-field v-model="editedItem.nama" label="Nama" />
             <v-text-field v-model="editedItem.jumlah" label="Jumlah" type="number" />
+            <v-col>
+              <v-select
+                v-model="categories"
+                :items="categories"
+                item-text="nm"
+                item-value="pk"
+                label="Kategori"
+              />
+            </v-col>
             <v-text-field v-model="editedItem.harga" label="Harga" type="number" />
           </v-form>
         </v-card-text>
@@ -227,14 +236,26 @@
           harga: 0,
           kategorifk: 0,
         },
-        kategorifk: [],
+        kategorifk: '',
+        categories: [],
         selected: [],
       }
     },
     mounted () {
+      this.loadKategori()
       this.loadItems()
     },
     methods: {
+      loadKategori () {
+        axios
+          .get('http://localhost/crud-php/api/kategori.php')
+          .then((response) => {
+            this.categories = response.data
+          })
+          .catch((error) => {
+            console.error(error)
+          })
+      },
       loadItems (page = 1) {
         this.loading = true
         // echo   ('test');
@@ -251,10 +272,6 @@
             this.pagination = response.data.pagination
             this.totalItems = response.data.total_items
             this.loading = false
-            this.kategorifk = response.data.map(item => ({
-              text: item.nm,
-              value: item.pk,
-            }))
           })
           .catch((error) => {
             console.error(error)
