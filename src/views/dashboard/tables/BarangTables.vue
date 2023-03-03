@@ -190,6 +190,7 @@
 
 <script>
   import axios from 'axios'
+  import { useToast } from 'vue-toastification'
   export default {
     data () {
       return {
@@ -286,22 +287,33 @@
         this.addItem.harga = ''
         this.dialog = true
       },
-      saveData () {
-        axios.post('http://localhost/crud-php/api/createdata.php', {
-          nama: this.addItem.nama,
-          jumlah: this.addItem.jumlah,
-          harga: this.addItem.harga,
-          kategorifk: this.addItem.kategorifk,
-        })
-          .then(response => {
-            console.log(response)
-            this.dialog = false
-            this.loadItems() // load data after success
+
+      setup () {
+        const toast = useToast()
+
+        function saveData () {
+          axios.post('http://localhost/crud-php/api/createdata.php', {
+            nama: this.addItem.nama,
+            jumlah: this.addItem.jumlah,
+            harga: this.addItem.harga,
+            kategorifk: this.addItem.kategorifk,
           })
-          .catch(error => {
-            console.log(error)
-          })
+            .then(response => {
+              console.log(response)
+              this.dialog = false
+              this.loadItems() // load data after success
+              toast.success('Data berhasil disimpan') // use toast.success method
+            })
+            .catch(error => {
+              console.log(error)
+            })
+        }
+
+        return {
+          saveData,
+        }
       },
+
       closeDialog () {
         this.dialog = false
       },

@@ -44,6 +44,12 @@ export default new Router({
           path: 'tables/regular-tables',
           component: () => import('@/views/dashboard/tables/RegularTables'),
         },
+        // Data Barang
+        {
+          name: 'Data Barang',
+          path: '/data-barang',
+          component: () => import('@/views/dashboard/tables/BarangTables'),
+        },
         // Master Data
         {
           name: 'Master Data',

@@ -47,12 +47,10 @@
 
     <v-divider class="mb-2" />
 
-    <v-list
+    <!-- <v-list
       expand
       nav
     >
-      <!-- Style cascading bug  -->
-      <!-- https://github.com/vuetifyjs/vuetify/pull/8574 -->
       <div />
 
       <template v-for="(item, i) in computedItems">
@@ -70,10 +68,68 @@
         />
       </template>
 
-      <!-- Style cascading bug  -->
-      <!-- https://github.com/vuetifyjs/vuetify/pull/8574 -->
       <div />
-    </v-list>
+    </v-list> -->
+
+<template>
+  <v-list>
+    <v-list-item to="/">
+      <v-list-item-icon>
+        <v-icon>mdi-view-dashboard</v-icon>
+      </v-list-item-icon>
+      <v-list-item-title>Dashboard</v-list-item-title>
+    </v-list-item>
+    <v-list-item>
+      <template>
+        <v-list-item-icon>
+          <v-icon>mdi-database</v-icon>
+        </v-list-item-icon>
+        <v-list-item-title >Master Data</v-list-item-title>
+        <v-list-item-action>
+          <v-icon>mdi-menu-down</v-icon>
+        </v-list-item-action>
+      </template>
+      <v-menu v-model="showMenu">
+        <v-list>
+          <v-list-item v-for="(menu, index) in menus" :key="index" @click="$router.push(menu.route)">
+            <v-list-item-title>{{ menu.title }}</v-list-item-title>
+          </v-list-item>
+        </v-list>
+      </v-menu>
+    </v-list-item>
+    <v-list-item to="/tables/regular-tables">
+      <v-list-item-icon>
+        <v-icon>mdi-cart-outline</v-icon>
+      </v-list-item-icon>
+      <v-list-item-title>Pembelian</v-list-item-title>
+    </v-list-item>
+    <v-list-item to="/maps/google-maps">
+      <v-list-item-icon>
+        <v-icon>mdi-chart-areaspline</v-icon>
+      </v-list-item-icon>
+      <v-list-item-title>Penjualan</v-list-item-title>
+    </v-list-item>
+    <v-list-item to="/components/notifications">
+      <v-list-item-icon>
+        <v-icon>mdi-cash-multiple</v-icon>
+      </v-list-item-icon>
+      <v-list-item-title>Akuntansi</v-list-item-title>
+    </v-list-item>
+    <v-list-item to="/components/icons">
+      <v-list-item-icon>
+        <v-icon>mdi-package-variant</v-icon>
+      </v-list-item-icon>
+      <v-list-item-title>Persediaan</v-list-item-title>
+    </v-list-item>
+    <v-list-item to="/components/typography">
+      <v-list-item-icon>
+        <v-icon>mdi-book-open</v-icon>
+      </v-list-item-icon>
+      <v-list-item-title>Laporan</v-list-item-title>
+    </v-list-item>
+  </v-list>
+</template>
+
   </v-navigation-drawer>
 </template>
 
@@ -93,45 +149,17 @@
       },
     },
 
-    data: () => ({
-      items: [
-        {
-          icon: 'mdi-view-dashboard',
-          title: 'Dashboard',
-          to: '/',
-        },
-        {
-          icon: ' mdi-database',
-          title: 'Master Data',
-          to: '/tables/master-data',
-        },
-        {
-          title: 'Pembelian',
-          icon: 'mdi-cart-outline',
-          to: '/tables/regular-tables',
-        },
-        {
-          title: 'Penjualan',
-          icon: 'mdi-chart-areaspline',
-          to: '/maps/google-maps',
-        },
-        {
-          title: 'Akuntansi',
-          icon: 'mdi-cash-multiple',
-          to: '/components/notifications',
-        },
-        {
-          title: 'Persediaan',
-          icon: 'mdi-package-variant',
-          to: '/components/icons',
-        },
-        {
-          title: 'Laporan',
-          icon: 'mdi-book-open',
-          to: '/pages/user',
-        },
-      ],
-    }),
+    data() {
+    return {
+      showMenu: false,
+      menus: [
+        { title: 'Kategori', route: '/kategori' },
+        { title: 'Supplier', route: '/supplier' },
+        { title: 'Pelanggan', route: '/pelanggan' },
+        { title: 'Barang', route: '/barang' }
+      ]
+    }
+  },
 
     computed: {
       ...mapState(['barColor', 'barImage']),
