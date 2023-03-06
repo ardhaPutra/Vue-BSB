@@ -53,7 +53,7 @@
                     >
                       <v-text-field
                         v-model="addItem.nama"
-                        label="Nama Barang*"
+                        outlined label="Nama Barang*"
                         required
                       />
                     </v-col>
@@ -67,7 +67,7 @@
                         :items="categories"
                         item-text="nm"
                         item-value="pk"
-                        label="Kategori"
+                        outlined label="Kategori"
                       />
                     </v-col>
                     <v-col
@@ -77,7 +77,7 @@
                     >
                       <v-text-field
                         v-model="addItem.jumlah"
-                        label="Jumlah*"
+                        outlined label="Jumlah*"
                         type="number"
                         hint="masukkan dalam bentuk angka"
                       />
@@ -89,7 +89,7 @@
                     >
                       <v-text-field
                         v-model="addItem.harga"
-                        label="Harga*"
+                        outlined label="Harga*"
                         type="number"
                         hint="masukkan dalam bentuk angka"
                         required
@@ -103,6 +103,7 @@
             <v-card-actions>
               <v-spacer />
               <v-btn
+                type="button"
                 color="error"
                 variant="text"
                 @click="closeDialog"
@@ -110,6 +111,7 @@
                 Batal
               </v-btn>
               <v-btn
+                type="button"
                 color="success"
                 variant="text"
                 @click="saveData"
@@ -150,7 +152,7 @@
       </v-data-table>
     </v-card>
 
-    <v-dialog v-model="editDialog" max-width="500px">
+    <v-dialog :key="editedItem.id_barang" v-model="editDialog" max-width="500px">
       <v-card>
         <v-card-title>
           Edit Barang
@@ -158,7 +160,7 @@
 
         <v-card-text>
           <v-form ref="form">
-            <v-text-field v-model="editedItem.id_barang" label="id_barang" />
+            <v-text-field v-if="hideIdField" :value="editedItem.id_barang" label="id_barang" readonly disabled />
             <v-text-field v-model="editedItem.nama" label="Nama" />
             <v-text-field v-model="editedItem.jumlah" label="Jumlah" type="number" />
             <v-col>
@@ -167,7 +169,8 @@
                 :items="categories"
                 item-text="nm"
                 item-value="pk"
-                label="Kategori"
+                outlined label="Kategori"
+                :value="editedItem.kategorifk"
               />
             </v-col>
             <v-text-field v-model="editedItem.harga" label="Harga" type="number" />
@@ -176,10 +179,10 @@
 
         <v-card-actions>
           <v-spacer />
-          <v-btn color="blue darken-1" text @click="closeDialogEdit">
+          <v-btn type="button" color="blue darken-1" text @click="closeDialogEdit">
             Cancel
           </v-btn>
-          <v-btn color="blue darken-1" text @click="updateItem">
+          <v-btn type="button" color="blue darken-1" text @click="updateItem">
             Save
           </v-btn>
         </v-card-actions>
@@ -190,7 +193,6 @@
 
 <script>
   import axios from 'axios'
-  import { useToast } from 'vue-toastification'
   export default {
     data () {
       return {
@@ -212,7 +214,7 @@
         itemsPerPage: 10,
         currentPage: 1,
         search: '',
-        editedIndex: -1,
+        editedIndex: null,
         editedItem: {
           id_barang: '',
           nama: '',
@@ -287,33 +289,22 @@
         this.addItem.harga = ''
         this.dialog = true
       },
-
-      setup () {
-        const toast = useToast()
-
-        function saveData () {
-          axios.post('http://localhost/crud-php/api/createdata.php', {
-            nama: this.addItem.nama,
-            jumlah: this.addItem.jumlah,
-            harga: this.addItem.harga,
-            kategorifk: this.addItem.kategorifk,
+      saveData () {
+        axios.post('http://localhost/crud-php/api/createdata.php', {
+          nama: this.addItem.nama,
+          jumlah: this.addItem.jumlah,
+          harga: this.addItem.harga,
+          kategorifk: this.addItem.kategorifk,
+        })
+          .then(response => {
+            console.log(response)
+            this.dialog = false
+            this.loadItems() // load data after success
           })
-            .then(response => {
-              console.log(response)
-              this.dialog = false
-              this.loadItems() // load data after success
-              toast.success('Data berhasil disimpan') // use toast.success method
-            })
-            .catch(error => {
-              console.log(error)
-            })
-        }
-
-        return {
-          saveData,
-        }
+          .catch(error => {
+            console.log(error)
+          })
       },
-
       closeDialog () {
         this.dialog = false
       },
@@ -326,14 +317,25 @@
         this.selectedCategory = this.categories.find((category) => {
           return category.pk === item.kategorifk
         })
+
+        // Set value kategorifk agar terpilih secara otomatis
+        this.editedItem.kategorifk = this.selectedCategory.pk
+
+        if (this.editedItem.kategorifk) {
+          this.hideIdField = true
+        }
       },
       closeDialogEdit () {
+        // this.editDialog = false
+        // this.$refs.form.reset()
+        if (this.$refs.form) {
+          this.$refs.form.reset()
+        }
         this.editDialog = false
-        this.$refs.form.reset()
       },
       // edit item
       updateItem () {
-        axios.post('http://localhost/crud-php/api/update.php' + this.editedItem.id_barang, this.editedItem)
+        axios.post('http://localhost/crud-php/api/updatedata.php', this.editedItem)
           .then(response => {
             // handle success
             console.log(response.data)
@@ -344,6 +346,7 @@
           .catch(error => {
             // handle error
             console.log(error)
+            this.$toast.error('Data barang gagal diupdate')
           })
       },
       deleteItem (item) {

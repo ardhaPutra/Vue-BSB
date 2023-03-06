@@ -97,6 +97,12 @@
         </v-list>
       </v-menu>
     </v-list-item>
+    <v-list-item to="/data-barang">
+      <v-list-item-icon>
+        <v-icon>mdi-list-box-outline</v-icon>
+      </v-list-item-icon>
+      <v-list-item-title>Data Barang</v-list-item-title>
+    </v-list-item>
     <v-list-item to="/tables/regular-tables">
       <v-list-item-icon>
         <v-icon>mdi-cart-outline</v-icon>
