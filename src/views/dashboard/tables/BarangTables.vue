@@ -1,3 +1,4 @@
+<!-- eslint-disable vue/no-unused-vars -->
 <!-- eslint-disable vue/no-duplicate-attributes -->
 <!-- eslint-disable vue/valid-v-bind -->
 <!-- eslint-disable no-undef -->
@@ -11,28 +12,79 @@
     tag="section"
   >
     <div class="py-3" />
+
+    <!-- Alert Simpan Data -->
     <template>
       <div>
-        <v-dialog v-model="dialog" max-width="500px">
-        <!-- your dialog content here -->
-        </v-dialog>
+        <v-dialog v-model="dialog" max-width="500px" />
 
-         <!-- add success alert -->
         <v-alert
           ref="successAlert"
           color="success"
           icon="mdi-check-circle-outline"
           :value="alertVisible"
           dismissible
+          dark
           @click:close="alertVisible = false"
         >
-          <template #close>
-            <v-icon>mdi-close-circle</v-icon>
+          <template #close="{ toggle }">
+            <v-btn icon @click="hideSuccessAlert">
+              <v-icon class="white--text">mdi-close-circle</v-icon>
+            </v-btn>
           </template>
-          Data berhasil disimpan.
+          <span class="white--text">Data berhasil disimpan.</span>
         </v-alert>
       </div>
     </template>
+
+    <!-- Alert Delete Data -->
+    <template>
+      <div>
+        <v-dialog v-model="dialog" max-width="500px" />
+
+        <v-alert
+          ref="deletedAlert"
+          color="success"
+          icon="mdi-check-circle-outline"
+          :value="alertDeletedVisible"
+          dismissible
+          dark
+          @click:close="alertDeletedVisible = false"
+        >
+          <template #close="{ toggle }">
+            <v-btn icon @click="hideDeletedAlert">
+              <v-icon class="white--text">mdi-close-circle</v-icon>
+            </v-btn>
+          </template>
+          <span class="white--text">Data berhasil dihapus.</span>
+        </v-alert>
+      </div>
+    </template>
+
+    <!-- Alert Update Data -->
+    <template>
+      <div>
+        <v-dialog v-model="dialog" max-width="500px" />
+
+        <v-alert
+          ref="updatedAlert"
+          color="success"
+          icon="mdi-check-circle-outline"
+          :value="alertUpdatedVisible"
+          dismissible
+          dark
+          @click:close="alertUpdatedVisible = false"
+        >
+          <template #close="{ toggle }">
+            <v-btn icon @click="hideUpdatedAlert">
+              <v-icon class="white--text">mdi-close-circle</v-icon>
+            </v-btn>
+          </template>
+          <span class="white--text">Data berhasil diubah.</span>
+        </v-alert>
+      </div>
+    </template>
+
     <v-card>
       <v-card-title>
         Data Barang
@@ -293,6 +345,8 @@
         selected: [],
         selectedCategory: null,
         alertVisible: false,
+        alertUpdatedVisible: false,
+        alertDeletedVisible: false,
       }
     },
     mounted () {
@@ -372,16 +426,17 @@
             }
             this.alertVisible = true // add success alert
             this.$refs.successAlert.$refs.alert.open()
-            this.hideAlert() // add hide alert method
+            this.hideSuccessAlert()
           })
           .catch(error => {
             console.log(error)
           })
       },
-      hideAlert () {
-        setTimeout(() => {
+      hideSuccessAlert () {
+        if (this.alertVisible) {
           this.alertVisible = false
-        }, 5000) // hide alert after 5 seconds
+          this.$refs.successAlert.$refs.alert.close()
+        }
       },
       closeDialog () {
         this.dialog = false
@@ -431,13 +486,20 @@
             console.log(response.data)
             this.editDialog = false
             this.loadItems()
-            this.$toast.success('Data barang berhasil diupdate')
+            this.alertUpdatedVisible = true // add success alert
+            this.$refs.updatedAlert.$refs.alert.open()
+            this.hideUpdatedAlert()
           })
           .catch(error => {
             // handle error
             console.log(error)
-            this.$toast.error('Data barang gagal diupdate')
           })
+      },
+      hideUpdatedAlert () {
+        if (this.alertUpdatedVisible) {
+          this.alertUpdatedVisible = false
+          this.$refs.updatedAlert.$refs.alert.close()
+        }
       },
       deleteItem (item) {
         if (confirm('Anda yakin ingin menghapus item ini?')) {
@@ -451,16 +513,19 @@
               }
               // update the totalItems property
               this.totalItems -= 1
-              // show success message
-              this.snackbar = true
-              this.snackbarText = 'Data berhasil dihapus'
+              this.alertDeletedVisible = true // add success alert
+              this.$refs.deletedAlert.$refs.alert.open()
+              this.hideDeletedAlert()
             })
             .catch((err) => {
               console.error(err)
-              // show error message
-              this.snackbar = true
-              this.snackbarText = 'Gagal menghapus data'
             })
+        }
+      },
+      hideDeletedAlert () {
+        if (this.alertDeletedVisible) {
+          this.alertDeletedVisible = false
+          this.$refs.deletedAlert.$refs.alert.close()
         }
       },
     },
