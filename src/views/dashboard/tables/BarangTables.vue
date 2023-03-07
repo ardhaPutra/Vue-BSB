@@ -11,7 +11,28 @@
     tag="section"
   >
     <div class="py-3" />
+    <template>
+      <div>
+        <v-dialog v-model="dialog" max-width="500px">
+        <!-- your dialog content here -->
+        </v-dialog>
 
+         <!-- add success alert -->
+        <v-alert
+          ref="successAlert"
+          color="success"
+          icon="mdi-check-circle-outline"
+          :value="alertVisible"
+          dismissible
+          @click:close="alertVisible = false"
+        >
+          <template #close>
+            <v-icon>mdi-close-circle</v-icon>
+          </template>
+          Data berhasil disimpan.
+        </v-alert>
+      </div>
+    </template>
     <v-card>
       <v-card-title>
         Data Barang
@@ -68,6 +89,19 @@
                         item-text="nm"
                         item-value="pk"
                         outlined label="Kategori"
+                      />
+                    </v-col>
+                    <v-col
+                      cols="12"
+                      sm="6"
+                      md="4"
+                    >
+                      <v-select
+                        v-model="addItem.satuanfk"
+                        :items="satuan"
+                        item-text="ns"
+                        item-value="pk"
+                        outlined label="satuan"
                       />
                     </v-col>
                     <v-col
@@ -173,6 +207,16 @@
                 :value="editedItem.kategorifk"
               />
             </v-col>
+            <v-col>
+              <v-select
+                v-model="editedItem.satuanfk"
+                :items="satuan"
+                item-text="ns"
+                item-value="pk"
+                outlined label="Satuan"
+                :value="editedItem.satuanfk"
+              />
+            </v-col>
             <v-text-field v-model="editedItem.harga" label="Harga" type="number" />
           </v-form>
         </v-card-text>
@@ -207,6 +251,7 @@
           { text: 'Barcode', value: 'barcode' },
           { text: 'Tanggal', value: 'tanggal' },
           { text: 'Kategori', value: 'nm' },
+          { text: 'Satuan', value: 'ns' },
           { text: 'Action', value: 'actions', sortable: false },
         ],
         totalItems: 0,
@@ -219,6 +264,7 @@
           id_barang: '',
           nama: '',
           kategorifk: '',
+          satuanfk: '',
           jumlah: 0,
           harga: 0,
           barcode: '',
@@ -228,6 +274,7 @@
           id_barang: '',
           nama: '',
           kategorifk: '',
+          satuanfk: '',
           jumlah: 0,
           harga: 0,
           barcode: '',
@@ -238,15 +285,19 @@
           jumlah: 0,
           harga: 0,
           kategorifk: 0,
+          satuanfk: 0,
         },
         kategorifk: '',
+        satuanfk: '',
         categories: [],
         selected: [],
         selectedCategory: null,
+        alertVisible: false,
       }
     },
     mounted () {
       this.loadKategori()
+      this.loadSatuan()
       this.loadItems()
     },
     methods: {
@@ -260,11 +311,21 @@
             console.error(error)
           })
       },
+      loadSatuan () {
+        axios
+          .get('http://localhost/crud-php/api/satuan.php')
+          .then((response) => {
+            this.satuan = response.data
+          })
+          .catch((error) => {
+            console.error(error)
+          })
+      },
       loadItems (page = 1) {
         this.loading = true
         // echo   ('test');
         axios
-          .get('http://localhost/crud-php/api/data.php', {
+          .get('http://localhost/crud-php/api/barang/data.php', {
             params: {
               page: page,
               per_page: this.itemsPerPage,
@@ -285,25 +346,42 @@
       openDialog () {
         this.addItem.nama = ''
         this.addItem.kategorifk = ''
+        this.addItem.satuanfk = ''
         this.addItem.jumlah = ''
         this.addItem.harga = ''
         this.dialog = true
       },
       saveData () {
-        axios.post('http://localhost/crud-php/api/createdata.php', {
+        axios.post('http://localhost/crud-php/api/barang/createdata.php', {
           nama: this.addItem.nama,
           jumlah: this.addItem.jumlah,
           harga: this.addItem.harga,
           kategorifk: this.addItem.kategorifk,
+          satuanfk: this.addItem.satuanfk,
         })
           .then(response => {
             console.log(response)
             this.dialog = false
             this.loadItems() // load data after success
+            this.addItem = {
+              nama: '',
+              kategorifk: null,
+              satuanfk: null,
+              jumlah: null,
+              harga: null,
+            }
+            this.alertVisible = true // add success alert
+            this.$refs.successAlert.$refs.alert.open()
+            this.hideAlert() // add hide alert method
           })
           .catch(error => {
             console.log(error)
           })
+      },
+      hideAlert () {
+        setTimeout(() => {
+          this.alertVisible = false
+        }, 5000) // hide alert after 5 seconds
       },
       closeDialog () {
         this.dialog = false
@@ -324,6 +402,18 @@
         if (this.editedItem.kategorifk) {
           this.hideIdField = true
         }
+
+        // Cari data satuan yang sesuai
+        this.selectedSatuan = this.satuan.find((satuan) => {
+          return satuan.pk === item.satuanfk
+        })
+
+        // Set value kategorifk agar terpilih secara otomatis
+        this.editedItem.satuanfk = this.selectedSatuan.pk
+
+        if (this.editedItem.satuanfk) {
+          this.hideIdField = true
+        }
       },
       closeDialogEdit () {
         // this.editDialog = false
@@ -335,7 +425,7 @@
       },
       // edit item
       updateItem () {
-        axios.post('http://localhost/crud-php/api/updatedata.php', this.editedItem)
+        axios.post('http://localhost/crud-php/api/barang/updatedata.php', this.editedItem)
           .then(response => {
             // handle success
             console.log(response.data)
@@ -350,17 +440,24 @@
           })
       },
       deleteItem (item) {
-        const index = this.items.indexOf(item)
         if (confirm('Anda yakin ingin menghapus item ini?')) {
           axios
-            .delete(`http://localhost/crud-php/api/delete.php?id_barang=${item.id_barang}`)
+            .delete('http://localhost/crud-php/api/barang/deletedata.php', { data: { id_barang: item.id_barang } })
             .then(() => {
-              this.items.splice(index, 1)
+              // menghapus item dari array items
+              const index = this.items.indexOf(item)
+              if (index > -1) {
+                this.items.splice(index, 1)
+              }
+              // update the totalItems property
+              this.totalItems -= 1
+              // show success message
               this.snackbar = true
               this.snackbarText = 'Data berhasil dihapus'
             })
             .catch((err) => {
               console.error(err)
+              // show error message
               this.snackbar = true
               this.snackbarText = 'Gagal menghapus data'
             })
