@@ -93,7 +93,7 @@
 
     <v-card>
       <v-card-title>
-        Data Kategori
+        Data Supplier
         <v-spacer />
         <v-text-field
           v-model="search"
@@ -106,20 +106,20 @@
 
         <v-dialog
           v-model="dialog"
-          max-width="500px"
+          width="auto"
         >
           <template v-slot:activator="{ on }">
             <v-btn
               dark color="primary"
               v-on="on"
             >
-              Tambah Kategori
+              Tambah Supplier
             </v-btn>
           </template>
 
           <v-card>
             <v-card-title>
-              <span class="text-h5">Tambah Kategori</span>
+              <span class="text-h5">Tambah Supplier</span>
             </v-card-title>
             <v-card-text>
               <v-form ref="form">
@@ -127,10 +127,35 @@
                   <v-row>
                     <v-col
                       cols="12"
+                      sm="6"
+                      md="4"
                     >
                       <v-text-field
-                        v-model="addItem.nm"
-                        label="Nama Kategori*"
+                        v-model="addItem.nama"
+                         label="Nama Supplier*"
+                        required
+                      />
+                    </v-col>
+                    <v-col
+                      cols="12"
+                      sm="6"
+                      md="4"
+                    >
+                      <v-text-field
+                        v-model="addItem.telp"
+                         label="telp*"
+                         type="number"
+                        required
+                      />
+                    </v-col>
+                    <v-col
+                      cols="12"
+                      sm="6"
+                      md="4"
+                    >
+                      <v-text-field
+                        v-model="addItem.alamat"
+                         label="alamat*"
                         required
                       />
                     </v-col>
@@ -191,16 +216,40 @@
       </v-data-table>
     </v-card>
 
-    <v-dialog :key="editedItem.pk" v-model="editDialog" max-width="500px">
+    <v-dialog :key="editedItem.id" v-model="editDialog" width="auto">
       <v-card>
         <v-card-title>
-          Edit Kategori
+          Edit Supplier
         </v-card-title>
 
         <v-card-text>
           <v-form ref="form">
-            <v-text-field v-if="hideIdField" :value="editedItem.pk" label="kategori" readonly disabled />
-            <v-text-field v-model="editedItem.nm" label="Nama" />
+            <v-container>
+              <v-row>
+                <v-col
+                  cols="12"
+                  sm="6"
+                  md="4"
+                >
+                  <v-text-field v-model="editedItem.nama" label="Supplier" />
+                </v-col>
+                <v-col
+                  cols="12"
+                  sm="6"
+                  md="4"
+                >
+                  <v-text-field v-model="editedItem.telp" label="Supplier" />
+                </v-col>
+                <v-col
+                  cols="12"
+                  sm="6"
+                  md="4"
+                >
+                  <v-text-field v-model="editedItem.alamat" label="Supplier" />
+                </v-col>
+                <v-text-field v-if="hideIdField" :value="editedItem.id" label="supplier" readonly disabled />
+              </v-row>
+            </v-container>
           </v-form>
         </v-card-text>
 
@@ -227,8 +276,10 @@
         editDialog: false,
         items: [],
         headers: [
-          { text: 'ID', value: 'pk' },
-          { text: 'Nama', value: 'nm' },
+          { text: 'ID', value: 'id' },
+          { text: 'Nama', value: 'nama' },
+          { text: 'Telp', value: 'telp' },
+          { text: 'Alamat', value: 'alamat' },
           { text: 'Action', value: 'actions', sortable: false },
         ],
         totalItems: 0,
@@ -238,15 +289,21 @@
         search: '',
         editedIndex: null,
         editedItem: {
-          pk: '',
-          nm: '',
+          id: '',
+          nama: '',
+          telp: 0,
+          alamat: '',
         },
         defaultItem: {
-          pk: '',
-          nm: '',
+          id: '',
+          nama: '',
+          telp: 0,
+          alamat: '',
         },
         addItem: {
-          nm: '',
+          nama: '',
+          telp: 0,
+          alamat: '',
         },
         selected: [],
         pagination: {},
@@ -263,7 +320,7 @@
         this.loading = true
         // echo   ('test');
         axios
-          .get('http://localhost/crud-php/api/kategori/data.php?', {
+          .get('http://localhost/crud-php/api/supplier/data.php?', {
             params: {
               page: page,
               per_page: this.itemsPerPage,
@@ -282,19 +339,25 @@
           })
       },
       openDialog () {
-        this.addItem.nm = ''
+        this.addItem.nama = ''
+        this.addItem.telp = 0
+        this.addItem.alamat = ''
         this.dialog = true
       },
       saveData () {
-        axios.post('http://localhost/crud-php/api/kategori/createdata.php', {
-          nm: this.addItem.nm,
+        axios.post('http://localhost/crud-php/api/supplier/createdata.php', {
+          nama: this.addItem.nama,
+          telp: this.addItem.telp,
+          alamat: this.addItem.alamat,
         })
           .then(response => {
             console.log(response)
             this.dialog = false
             this.loadItems() // load data after success
             this.addItem = {
-              nm: '',
+              nama: '',
+              telp: 0,
+              alamat: '',
             }
             this.alertVisible = true // add success alert
             this.$refs.successAlert.$refs.alert.open()
@@ -326,7 +389,7 @@
       },
       // edit item
       updateItem () {
-        axios.post('http://localhost/crud-php/api/kategori/updatedata.php', this.editedItem)
+        axios.post('http://localhost/crud-php/api/supplier/updatedata.php', this.editedItem)
           .then(response => {
             // handle success
             console.log(response.data)
@@ -350,7 +413,7 @@
       deleteItem (item) {
         if (confirm('Anda yakin ingin menghapus item ini?')) {
           axios
-            .delete('http://localhost/crud-php/api/kategori/deletedata.php', { data: { pk: item.pk } })
+            .delete('http://localhost/crud-php/api/supplier/deletedata.php', { data: { id: item.id } })
             .then(() => {
               // menghapus item dari array items
               const index = this.items.indexOf(item)

@@ -93,7 +93,7 @@
 
     <v-card>
       <v-card-title>
-        Data Kategori
+        Data Satuan
         <v-spacer />
         <v-text-field
           v-model="search"
@@ -113,13 +113,13 @@
               dark color="primary"
               v-on="on"
             >
-              Tambah Kategori
+              Tambah Satuan
             </v-btn>
           </template>
 
           <v-card>
             <v-card-title>
-              <span class="text-h5">Tambah Kategori</span>
+              <span class="text-h5">Tambah Satuan</span>
             </v-card-title>
             <v-card-text>
               <v-form ref="form">
@@ -129,8 +129,8 @@
                       cols="12"
                     >
                       <v-text-field
-                        v-model="addItem.nm"
-                        label="Nama Kategori*"
+                        v-model="addItem.ns"
+                        label="Nama Satuan*"
                         required
                       />
                     </v-col>
@@ -194,13 +194,13 @@
     <v-dialog :key="editedItem.pk" v-model="editDialog" max-width="500px">
       <v-card>
         <v-card-title>
-          Edit Kategori
+          Edit Satuan
         </v-card-title>
 
         <v-card-text>
           <v-form ref="form">
-            <v-text-field v-if="hideIdField" :value="editedItem.pk" label="kategori" readonly disabled />
-            <v-text-field v-model="editedItem.nm" label="Nama" />
+            <v-text-field v-if="hideIdField" :value="editedItem.pk" label="satuan" readonly disabled />
+            <v-text-field v-model="editedItem.ns" label="Satuan" />
           </v-form>
         </v-card-text>
 
@@ -228,7 +228,7 @@
         items: [],
         headers: [
           { text: 'ID', value: 'pk' },
-          { text: 'Nama', value: 'nm' },
+          { text: 'Nama', value: 'ns' },
           { text: 'Action', value: 'actions', sortable: false },
         ],
         totalItems: 0,
@@ -239,14 +239,14 @@
         editedIndex: null,
         editedItem: {
           pk: '',
-          nm: '',
+          ns: '',
         },
         defaultItem: {
           pk: '',
-          nm: '',
+          ns: '',
         },
         addItem: {
-          nm: '',
+          ns: '',
         },
         selected: [],
         pagination: {},
@@ -263,7 +263,7 @@
         this.loading = true
         // echo   ('test');
         axios
-          .get('http://localhost/crud-php/api/kategori/data.php?', {
+          .get('http://localhost/crud-php/api/satuan/data.php?', {
             params: {
               page: page,
               per_page: this.itemsPerPage,
@@ -282,19 +282,19 @@
           })
       },
       openDialog () {
-        this.addItem.nm = ''
+        this.addItem.ns = ''
         this.dialog = true
       },
       saveData () {
-        axios.post('http://localhost/crud-php/api/kategori/createdata.php', {
-          nm: this.addItem.nm,
+        axios.post('http://localhost/crud-php/api/satuan/createdata.php', {
+          ns: this.addItem.ns,
         })
           .then(response => {
             console.log(response)
             this.dialog = false
             this.loadItems() // load data after success
             this.addItem = {
-              nm: '',
+              ns: '',
             }
             this.alertVisible = true // add success alert
             this.$refs.successAlert.$refs.alert.open()
@@ -326,7 +326,7 @@
       },
       // edit item
       updateItem () {
-        axios.post('http://localhost/crud-php/api/kategori/updatedata.php', this.editedItem)
+        axios.post('http://localhost/crud-php/api/satuan/updatedata.php', this.editedItem)
           .then(response => {
             // handle success
             console.log(response.data)
@@ -350,7 +350,7 @@
       deleteItem (item) {
         if (confirm('Anda yakin ingin menghapus item ini?')) {
           axios
-            .delete('http://localhost/crud-php/api/kategori/deletedata.php', { data: { pk: item.pk } })
+            .delete('http://localhost/crud-php/api/satuan/deletedata.php', { data: { pk: item.pk } })
             .then(() => {
               // menghapus item dari array items
               const index = this.items.indexOf(item)

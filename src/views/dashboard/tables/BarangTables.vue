@@ -29,7 +29,9 @@
         >
           <template #close="{ toggle }">
             <v-btn icon @click="hideSuccessAlert">
-              <v-icon class="white--text">mdi-close-circle</v-icon>
+              <v-icon class="white--text">
+                mdi-close-circle
+              </v-icon>
             </v-btn>
           </template>
           <span class="white--text">Data berhasil disimpan.</span>
@@ -53,7 +55,9 @@
         >
           <template #close="{ toggle }">
             <v-btn icon @click="hideDeletedAlert">
-              <v-icon class="white--text">mdi-close-circle</v-icon>
+              <v-icon class="white--text">
+                mdi-close-circle
+              </v-icon>
             </v-btn>
           </template>
           <span class="white--text">Data berhasil dihapus.</span>
@@ -77,7 +81,9 @@
         >
           <template #close="{ toggle }">
             <v-btn icon @click="hideUpdatedAlert">
-              <v-icon class="white--text">mdi-close-circle</v-icon>
+              <v-icon class="white--text">
+                mdi-close-circle
+              </v-icon>
             </v-btn>
           </template>
           <span class="white--text">Data berhasil diubah.</span>
@@ -126,7 +132,7 @@
                     >
                       <v-text-field
                         v-model="addItem.nama"
-                        outlined label="Nama Barang*"
+                        label="Nama Barang*"
                         required
                       />
                     </v-col>
@@ -140,7 +146,7 @@
                         :items="categories"
                         item-text="nm"
                         item-value="pk"
-                        outlined label="Kategori"
+                        label="Kategori"
                       />
                     </v-col>
                     <v-col
@@ -153,7 +159,7 @@
                         :items="satuan"
                         item-text="ns"
                         item-value="pk"
-                        outlined label="satuan"
+                        label="satuan"
                       />
                     </v-col>
                     <v-col
@@ -163,7 +169,7 @@
                     >
                       <v-text-field
                         v-model="addItem.jumlah"
-                        outlined label="Jumlah*"
+                        label="Jumlah*"
                         type="number"
                         hint="masukkan dalam bentuk angka"
                       />
@@ -175,7 +181,7 @@
                     >
                       <v-text-field
                         v-model="addItem.harga"
-                        outlined label="Harga*"
+                        label="Harga*"
                         type="number"
                         hint="masukkan dalam bentuk angka"
                         required
@@ -238,7 +244,7 @@
       </v-data-table>
     </v-card>
 
-    <v-dialog :key="editedItem.id_barang" v-model="editDialog" max-width="500px">
+    <v-dialog :key="editedItem.id_barang" v-model="editDialog" width="auto">
       <v-card>
         <v-card-title>
           Edit Barang
@@ -246,30 +252,66 @@
 
         <v-card-text>
           <v-form ref="form">
-            <v-text-field v-if="hideIdField" :value="editedItem.id_barang" label="id_barang" readonly disabled />
-            <v-text-field v-model="editedItem.nama" label="Nama" />
-            <v-text-field v-model="editedItem.jumlah" label="Jumlah" type="number" />
-            <v-col>
-              <v-select
-                v-model="editedItem.kategorifk"
-                :items="categories"
-                item-text="nm"
-                item-value="pk"
-                outlined label="Kategori"
-                :value="editedItem.kategorifk"
-              />
-            </v-col>
-            <v-col>
-              <v-select
-                v-model="editedItem.satuanfk"
-                :items="satuan"
-                item-text="ns"
-                item-value="pk"
-                outlined label="Satuan"
-                :value="editedItem.satuanfk"
-              />
-            </v-col>
-            <v-text-field v-model="editedItem.harga" label="Harga" type="number" />
+            <v-container>
+              <v-row>
+                <v-col
+                  cols="12"
+                  sm="6"
+                  md="4"
+                >
+                  <v-text-field v-model="editedItem.nama" label="Nama" />
+                </v-col>
+                <v-col
+                  cols="12"
+                  sm="6"
+                  md="4"
+                >
+                  <v-text-field v-model="editedItem.jumlah" label="Jumlah" type="number" />
+                </v-col>
+                <v-col
+                  cols="12"
+                  sm="6"
+                  md="4"
+                >
+                  <v-select
+                    v-model="editedItem.kategorifk"
+                    :items="categories"
+                    item-text="nm"
+                    item-value="pk"
+                    label="Kategori"
+                    :value="editedItem.kategorifk"
+                  />
+                </v-col>
+                <v-col
+                  cols="12"
+                  sm="6"
+                  md="4"
+                >
+                  <v-select
+                    v-model="editedItem.satuanfk"
+                    :items="satuan"
+                    item-text="ns"
+                    item-value="pk"
+                    label="Satuan"
+                    :value="editedItem.satuanfk"
+                  />
+                </v-col>
+                <v-col
+                  cols="12"
+                  sm="6"
+                  md="4"
+                >
+                  <v-text-field v-model="editedItem.harga" label="Harga" type="number" />
+                </v-col>
+                <v-col
+                  cols="12"
+                  sm="6"
+                  md="4"
+                >
+                  <v-text-field v-if="hideIdField" :value="editedItem.id_barang" label="id_barang" readonly disabled />
+                </v-col>
+              </v-row>
+            </v-container>
           </v-form>
         </v-card-text>
 

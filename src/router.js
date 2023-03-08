@@ -44,6 +44,24 @@ export default new Router({
           path: 'tables/regular-tables',
           component: () => import('@/views/dashboard/tables/RegularTables'),
         },
+        // Data Kategori
+        {
+          name: 'Data Kategori',
+          path: '/data-kategori',
+          component: () => import('@/views/dashboard/tables/KategoriTables'),
+        },
+        // Data Satuan
+        {
+          name: 'Data Satuan',
+          path: '/data-satuan',
+          component: () => import('@/views/dashboard/tables/SatuanTables'),
+        },
+        // Data Supplier
+        {
+          name: 'Data Supplier',
+          path: '/data-supplier',
+          component: () => import('@/views/dashboard/tables/SupplierTables'),
+        },
         // Data Barang
         {
           name: 'Data Barang',

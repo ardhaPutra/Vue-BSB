@@ -97,11 +97,30 @@
         </v-list>
       </v-menu>
     </v-list-item>
+
+    <v-list-item to="/data-kategori">
+      <v-list-item-icon>
+        <v-icon>mdi mdi-shape</v-icon>
+      </v-list-item-icon>
+      <v-list-item-title>Kategori</v-list-item-title>
+    </v-list-item>
+    <v-list-item to="/data-satuan">
+      <v-list-item-icon>
+        <v-icon>mdi mdi-tape-measure</v-icon>
+      </v-list-item-icon>
+      <v-list-item-title>Satuan</v-list-item-title>
+    </v-list-item>
+    <v-list-item to="/data-supplier">
+      <v-list-item-icon>
+        <v-icon>mdi mdi-store-24-hour</v-icon>
+      </v-list-item-icon>
+      <v-list-item-title>Supplier</v-list-item-title>
+    </v-list-item>
     <v-list-item to="/data-barang">
       <v-list-item-icon>
         <v-icon>mdi-list-box-outline</v-icon>
       </v-list-item-icon>
-      <v-list-item-title>Data Barang</v-list-item-title>
+      <v-list-item-title>Barang</v-list-item-title>
     </v-list-item>
     <v-list-item to="/tables/regular-tables">
       <v-list-item-icon>
